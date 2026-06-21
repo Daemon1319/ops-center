@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import FlashSale from "@/components/FlashSale";
-import AuthVault from "@/components/AuthVault";
+import AuthVault from "@/features/auth-vault/index";
+import FlashSale from "@/features/flashsale-engine";
+// 1. Added the import for our new Rate Limiter Lab
+import RateLimiterLab from "@/features/rate-limiter-lab/index";
 
 export default function OpsCenter() {
   // THE MEMORY: This tells React which project to display.
@@ -81,6 +83,19 @@ export default function OpsCenter() {
           >
             2. High-Concurrency Locks
           </button>
+
+          {/* 2. Button 3: Rate Limiter Lab */}
+          <button 
+            onClick={() => {
+              setActiveTab("ratelimiter");
+              setIsMobileMenuOpen(false); // Auto-close menu on mobile
+            }}
+            className={`text-left px-4 py-3 rounded-lg font-medium transition-all ${
+              activeTab === "ratelimiter" ? "bg-blue-600 text-white" : "text-gray-400 hover:bg-gray-800"
+            }`}
+          >
+            3. Rate Limiter Lab
+          </button>
         </nav>
       </aside>
 
@@ -95,6 +110,11 @@ export default function OpsCenter() {
         {/* Conditional Rendering: Flash Sale */}
         {activeTab === "flashsale" && (
           <FlashSale />
+        )}
+
+        {/* 3. Conditional Rendering: Rate Limiter Lab */}
+        {activeTab === "ratelimiter" && (
+          <RateLimiterLab />
         )}
 
       </main>

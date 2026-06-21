@@ -1,11 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useAuth } from "@/context/AuthContext";
-import { useApi } from "@/hooks/useApi";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import { useApi } from "./hooks/useApi";
 
-export default function AuthVault() {
-  // THE FIX: Extracted clearLogs from the context
+function AuthVaultContent() {
   const { user, accessToken, tokenExp, logs, addLog, clearLogs, login, register, logout, isLoading } = useAuth();
   const authFetch = useApi();
 
@@ -218,7 +217,7 @@ export default function AuthVault() {
           {/* JWT Decoder Panel */}
           {accessToken && (
             <div className="bg-slate-900 rounded-xl p-6 shadow-lg border border-slate-800">
-               <h3 className="text-sm font-black text-white uppercase tracking-widest mb-3 flex items-center justify-between">
+              <h3 className="text-sm font-black text-white uppercase tracking-widest mb-3 flex items-center justify-between">
                 <span>JWT Payload Decoder</span>
                 <span className="text-xs text-slate-500 font-mono font-normal">base64 decoded</span>
               </h3>
@@ -292,5 +291,14 @@ export default function AuthVault() {
         </div>
       </div>
     </section>
+  );
+}
+
+// 3. Main Export wraps the Content inside the AuthProvider context boundaries
+export default function AuthVault() {
+  return (
+    <AuthProvider>
+      <AuthVaultContent />
+    </AuthProvider>
   );
 }
