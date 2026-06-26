@@ -3,8 +3,8 @@
 import { useState } from "react";
 import AuthVault from "@/features/auth-vault/index";
 import FlashSale from "@/features/flashsale-engine";
-// 1. Added the import for our new Rate Limiter Lab
 import RateLimiterLab from "@/features/rate-limiter-lab/index";
+import TaskYard from "@/features/task-yard/index";
 
 export default function OpsCenter() {
   // THE MEMORY: This tells React which project to display.
@@ -96,6 +96,19 @@ export default function OpsCenter() {
           >
             3. Rate Limiter Lab
           </button>
+
+          {/* Button 4: Task Yard */}
+          <button
+            onClick={() => {
+              setActiveTab("taskyard");
+              setIsMobileMenuOpen(false);
+            }}
+            className={`text-left px-4 py-3 rounded-lg font-medium transition-all ${
+              activeTab === "taskyard" ? "bg-blue-600 text-white" : "text-gray-400 hover:bg-gray-800"
+            }`}
+          >
+            4. Task Yard
+          </button>
         </nav>
       </aside>
 
@@ -115,6 +128,11 @@ export default function OpsCenter() {
         {/* 3. Conditional Rendering: Rate Limiter Lab */}
         {activeTab === "ratelimiter" && (
           <RateLimiterLab />
+        )}
+
+        {/* 4. Conditional Rendering: Task Yard */}
+        {activeTab === "taskyard" && (
+          <TaskYard />
         )}
 
       </main>
