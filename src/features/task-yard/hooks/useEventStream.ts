@@ -7,12 +7,9 @@ interface UseEventStreamOptions {
   flushIntervalMs?: number;
 }
 
-/**
- * Connects to the SSE pipeline event stream and returns a rolling history
- * of events.  Incoming events are **batched** and flushed on a timer to
- * avoid a render-storm when the backend emits hundreds of events in a
- * short burst (e.g. flooding 50 jobs at once).
- */
+const INITIAL_RETRY_DELAY_MS = 3000;
+const MAX_RETRY_DELAY_MS = 30000;
+
 export function useEventStream({
   onEvent,
   maxHistory = 200,
@@ -29,6 +26,11 @@ export function useEventStream({
 
   // Fix recursive connect reference
   const connectRef = useRef<(() => void) | null>(null);
+
+  // Tracks the current backoff delay; resets to the initial value on
+  // every successful connection.
+  const retryDelayRef = useRef(INITIAL_RETRY_DELAY_MS);
+  const retryTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Accumulator: SSE listeners push here, the flush timer drains it.
   const bufferRef = useRef<PipelineEvent[]>([]);
@@ -60,17 +62,28 @@ export function useEventStream({
       eventSourceRef.current.close();
     }
 
+    // Cancel any pending reconnect attempt so we don't end up with
+    // duplicate connections if connect() is called manually mid-backoff.
+    if (retryTimeoutRef.current) {
+      clearTimeout(retryTimeoutRef.current);
+      retryTimeoutRef.current = null;
+    }
+
     const es = new EventSource(`${baseUrl}/api/queue/events`);
     eventSourceRef.current = es;
 
     es.onopen = () => {
       setConnected(true);
+      // Reset backoff after a successful connection.
+      retryDelayRef.current = INITIAL_RETRY_DELAY_MS;
     };
 
     es.onerror = () => {
       setConnected(false);
       if (es.readyState === EventSource.CLOSED) {
-        setTimeout(() => connectRef.current?.(), 3000);
+        const delay = retryDelayRef.current;
+        retryTimeoutRef.current = setTimeout(() => connectRef.current?.(), delay);
+        retryDelayRef.current = Math.min(delay * 2, MAX_RETRY_DELAY_MS);
       }
     };
 
@@ -95,6 +108,10 @@ export function useEventStream({
   useEffect(() => {
     connect();
     return () => {
+      if (retryTimeoutRef.current) {
+        clearTimeout(retryTimeoutRef.current);
+        retryTimeoutRef.current = null;
+      }
       eventSourceRef.current?.close();
       eventSourceRef.current = null;
     };
