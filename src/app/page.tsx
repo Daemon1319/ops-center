@@ -5,6 +5,7 @@ import AuthVault from "@/features/auth-vault/index";
 import FlashSale from "@/features/flashsale-engine";
 import RateLimiterLab from "@/features/rate-limiter-lab/index";
 import TaskYard from "@/features/task-yard/index";
+import CloudStash from "@/features/cloud-stash/index";
 
 export default function OpsCenter() {
   // THE MEMORY: This tells React which project to display.
@@ -109,6 +110,19 @@ export default function OpsCenter() {
           >
             4. Task Yard
           </button>
+
+          {/* Button 5: Cloud Stash */}
+          <button
+            onClick={() => {
+              setActiveTab("cloudstash");
+              setIsMobileMenuOpen(false);
+            }}
+            className={`text-left px-4 py-3 rounded-lg font-medium transition-all ${
+              activeTab === "cloudstash" ? "bg-blue-600 text-white" : "text-gray-400 hover:bg-gray-800"
+            }`}
+          >
+            5. Cloud Stash
+          </button>
         </nav>
       </aside>
 
@@ -133,6 +147,11 @@ export default function OpsCenter() {
         {/* 4. Conditional Rendering: Task Yard */}
         {activeTab === "taskyard" && (
           <TaskYard />
+        )}
+
+        {/* 5. Conditional Rendering: Cloud Stash */}
+        {activeTab === "cloudstash" && (
+          <CloudStash />
         )}
 
       </main>

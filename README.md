@@ -1,36 +1,29 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# OpsCenter
 
-## Getting Started
+A unified operations dashboard built with **Next.js 16**, **React 19**, and **TypeScript**. Serves as the single frontend for five independent backend microservices — authentication, concurrency testing, rate limiting, job queues, and file storage.
 
-First, run the development server:
+## Modules
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+| Module | Backend Service | What It Does |
+|--------|----------------|--------------|
+| Identity Vault | AuthVault | Register, login, logout, JWT session management |
+| High-Concurrency Locks | FlashLock Engine | Flash sale simulator, lock mode switching |
+| Rate Limiter Lab | Rate Limiter | Login attack simulator, algorithm switching |
+| Task Yard | TaskYard | Job submission, real-time SSE pipeline feed, chaos mode |
+| Cloud Stash | CloudStash | File upload/download, bucket management |
+
+## Tech Stack
+
+Next.js 16 · React 19 · TypeScript 5 · Tailwind CSS 4 · jwt-decode
+
+## Project Structure
+
+```
+src/features/
+├── auth-vault/          # Identity & session management
+├── flashsale-engine/    # Concurrency lock testing UI
+├── rate-limiter-lab/    # Rate limiting algorithm lab
+├── task-yard/           # Job queue & pipeline dashboard
+└── cloud-stash/         # File storage management
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
