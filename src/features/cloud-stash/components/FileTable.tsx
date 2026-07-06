@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Fragment } from "react";
 import type { FileMetadata } from "../types/cloudStash.types";
 
 interface FileTableProps {
@@ -30,6 +30,7 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
 
 export function FileTable({ files, isLoading, onGenerateLink, onDeleteFile }: FileTableProps) {
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [expandedFileId, setExpandedFileId] = useState<string | null>(null);
 
   const handleDelete = async (fileId: string, originalFileName: string) => {
     const confirmed = window.confirm(`Delete "${originalFileName}"? This cannot be undone.`);
@@ -45,63 +46,111 @@ export function FileTable({ files, isLoading, onGenerateLink, onDeleteFile }: Fi
   };
 
   return (
-    <section className="rounded-lg border border-slate-700 bg-slate-800 p-4">
-      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
+    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 h-full overflow-hidden flex flex-col">
+      <h3 className="text-sm font-black text-gray-800 uppercase tracking-widest mb-4 shrink-0">
         Files
-      </h2>
+      </h3>
 
       {isLoading ? (
-        <p className="text-sm text-slate-400">Loading files…</p>
+        <div className="flex-1 flex items-center justify-center p-8">
+          <p className="text-sm text-gray-500 font-bold uppercase tracking-widest animate-pulse">Loading files…</p>
+        </div>
       ) : files.length === 0 ? (
-        <p className="text-sm text-slate-500">No files in this bucket yet.</p>
+        <div className="flex-1 flex flex-col items-center justify-center p-12 border-2 border-dashed border-gray-100 rounded-xl bg-gray-50/50">
+          <p className="text-sm font-bold text-gray-500 mb-1">Bucket is Empty</p>
+          <p className="text-xs text-gray-400">No files in this bucket yet.</p>
+        </div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
+        <div className="flex-1 -mx-6 px-6">
+          <table className="w-full text-left text-sm border-collapse">
             <thead>
-              <tr className="border-b border-slate-700 text-xs uppercase tracking-wide text-slate-400">
-                <th className="py-2 pr-4 font-medium">Name</th>
-                <th className="py-2 pr-4 font-medium">Size</th>
-                <th className="py-2 pr-4 font-medium">Type</th>
-                <th className="py-2 pr-4 font-medium">Uploaded</th>
-                <th className="py-2 pr-4 font-medium">Actions</th>
+              <tr className="border-b-2 border-gray-200 text-xs font-black uppercase tracking-widest text-gray-500 bg-white sticky top-0">
+                <th className="py-3 pr-4">Name</th>
+                <th className="py-3 pr-4 hidden lg:table-cell">Size</th>
+                <th className="py-3 pr-4 hidden lg:table-cell">Type</th>
+                <th className="py-3 pr-4 hidden lg:table-cell">Uploaded</th>
+                <th className="py-3 pr-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
               {files.map((file) => (
-                <tr key={file.id} className="border-b border-slate-800 text-slate-200">
-                  <td className="max-w-64 truncate py-2 pr-4" title={file.originalFileName}>
-                    {file.originalFileName}
-                  </td>
-                  <td className="py-2 pr-4 text-slate-400">{formatFileSize(file.fileSize)}</td>
-                  <td className="py-2 pr-4 text-slate-400">{file.contentType}</td>
-                  <td className="py-2 pr-4 text-slate-400">
-                    {dateFormatter.format(new Date(file.uploadedAt))}
-                  </td>
-                  <td className="py-2 pr-4">
-                    <div className="flex gap-3">
-                      <button
-                        type="button"
-                        onClick={() => onGenerateLink(file.id)}
-                        className="text-blue-400 transition hover:text-blue-300"
+                <Fragment key={file.id}>
+                  <tr className="border-b border-gray-100 text-gray-700 hover:bg-gray-50/80 transition-colors group">
+                    <td 
+                      className="max-w-[12rem] sm:max-w-64 py-3 pr-4 cursor-pointer hover:text-blue-600 transition-colors" 
+                      title={file.originalFileName}
+                      onClick={() => setExpandedFileId(expandedFileId === file.id ? null : file.id)}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className={`text-[10px] text-gray-400 transition-transform lg:hidden ${expandedFileId === file.id ? "rotate-90 text-blue-500" : ""}`}>
+                          &#9654;
+                        </span>
+                        <span className="truncate font-medium text-gray-900 group-hover:text-blue-600 transition-colors">{file.originalFileName}</span>
+                      </div>
+                    </td>
+                    <td className="py-3 pr-4 text-gray-500 font-mono text-xs hidden lg:table-cell">{formatFileSize(file.fileSize)}</td>
+                    <td className="py-3 pr-4 text-gray-500 text-xs hidden lg:table-cell">
+                      <span 
+                        className="inline-block max-w-[120px] truncate bg-gray-100 text-gray-600 px-2 py-1 rounded-md border border-gray-200 align-middle"
+                        title={file.contentType}
                       >
-                        Generate link
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleDelete(file.id, file.originalFileName)}
-                        disabled={deletingId === file.id}
-                        className="text-red-400 transition hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-40"
-                      >
-                        {deletingId === file.id ? "Deleting…" : "Delete"}
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+                        {file.contentType}
+                      </span>
+                    </td>
+                    <td className="py-3 pr-4 text-gray-500 text-xs whitespace-nowrap hidden lg:table-cell">
+                      {dateFormatter.format(new Date(file.uploadedAt))}
+                    </td>
+                    <td className="py-3 pr-4">
+                      <div className="flex items-center justify-end gap-2 sm:gap-3">
+                        <button
+                          type="button"
+                          onClick={() => onGenerateLink(file.id)}
+                          className="text-xs font-bold text-blue-600 transition hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-md"
+                        >
+                          LINK
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(file.id, file.originalFileName)}
+                          disabled={deletingId === file.id}
+                          className="text-xs font-bold text-red-600 transition hover:text-red-800 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-md disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          {deletingId === file.id ? "DELETING…" : "DELETE"}
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  
+                  {expandedFileId === file.id && (
+                    <tr className="bg-blue-50/30 border-b border-gray-100 lg:hidden shadow-inner">
+                      <td colSpan={5} className="py-3 px-4">
+                        <div className="flex flex-col gap-2 text-xs">
+                          <div className="flex items-center gap-2">
+                            <span className="font-black text-gray-400 uppercase tracking-widest w-20">Size</span> 
+                            <span className="text-gray-700 font-mono">{formatFileSize(file.fileSize)}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-black text-gray-400 uppercase tracking-widest w-20">Type</span> 
+                            <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded border border-gray-200 inline-block max-w-[200px] truncate">
+                              {file.contentType}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-black text-gray-400 uppercase tracking-widest w-20">Uploaded</span> 
+                            <span className="text-gray-700">
+                              {dateFormatter.format(new Date(file.uploadedAt))}
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </Fragment>
               ))}
             </tbody>
           </table>
         </div>
       )}
-    </section>
+    </div>
   );
 }
