@@ -15,11 +15,11 @@ export default function OpsCenter() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row overflow-hidden">
+    <div className="min-h-screen bg-gray-50 flex flex-col xl:flex-row overflow-hidden">
       
       {/* ── MOBILE HEADER ── */}
       {/* Visible only on mobile (md:hidden), houses the Title and the Hamburger Button */}
-      <div className="md:hidden flex items-center justify-between bg-gray-900 text-white p-4 shadow-md z-20">
+      <div className="xl:hidden flex items-center justify-between bg-gray-900 text-white p-4 shadow-md z-20">
         <h1 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">
           Ops Center
         </h1>
@@ -42,7 +42,7 @@ export default function OpsCenter() {
       {/* ── MOBILE OVERLAY ── */}
       {isMobileMenuOpen && (
         <div 
-          className="fixed inset-0 z-30 md:hidden backdrop-blur-sm bg-white/10"
+          className="fixed inset-0 z-30 xl:hidden backdrop-blur-sm bg-white/10"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
@@ -50,15 +50,15 @@ export default function OpsCenter() {
       {/* 1. The Sidebar */}
       <aside className={`
         fixed inset-y-0 left-0 z-40 w-64 bg-gray-900 text-white p-6 flex flex-col shadow-2xl transition-transform duration-300 ease-in-out
-        md:relative md:translate-x-0
+        xl:relative xl:translate-x-0
         ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
       `}>
         {/* Title hidden on mobile because it's in the top bar, visible on desktop */}
-        <h1 className="hidden md:block text-xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">
+        <h1 className="hidden xl:block text-xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">
           Ops Center
         </h1>
         
-        <nav className="flex flex-col gap-2 mt-4 md:mt-0">
+        <nav className="flex flex-col gap-2 mt-4 xl:mt-0">
           {/* Button 1: Identity Vault */}
           <button 
             onClick={() => {
@@ -127,7 +127,7 @@ export default function OpsCenter() {
       </aside>
 
       {/* 2. The Main Stage */}
-      <main className="flex-1 p-4 md:p-10 flex flex-col items-center justify-center overflow-y-auto">
+      <main className="flex-1 p-4 xl:p-10 flex flex-col items-center justify-center overflow-y-auto">
         
         {/* Conditional Rendering: Auth Vault */}
         {activeTab === "auth" && (

@@ -47,26 +47,30 @@ export function PresignedUrlPanel({ fileName, url, expiresAt, onClose }: Presign
   };
 
   return (
-    <section className="rounded-lg border border-slate-700 bg-slate-800 p-4">
-      <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400">
-          Presigned Link
-        </h2>
+    <div className="bg-blue-50 rounded-xl p-5 border border-blue-200 shadow-sm mt-6 relative animate-in fade-in slide-in-from-bottom-2 duration-300">
+      <div className="mb-4 flex items-center justify-between border-b border-blue-100 pb-3">
+        <h3 className="text-xs font-black text-blue-900 uppercase tracking-widest flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+          Presigned Link Generated
+        </h3>
         <button
           type="button"
           onClick={onClose}
-          className="text-xs text-slate-500 transition hover:text-slate-300"
+          className="text-[10px] font-bold text-blue-400 uppercase tracking-wider transition hover:text-blue-700 bg-white px-2 py-1 rounded border border-blue-200"
         >
           Close
         </button>
       </div>
 
-      <p className="mb-2 truncate text-sm text-slate-300" title={fileName}>
+      <p className="mb-3 truncate text-sm font-bold text-gray-800" title={fileName}>
+        <span className="text-xs font-medium text-gray-500 uppercase tracking-wide mr-2">File:</span>
         {fileName}
       </p>
 
       {isExpired ? (
-        <p className="text-sm text-red-400">This link has expired. Generate a new one.</p>
+        <div className="bg-red-50 text-red-700 p-3 rounded-lg border border-red-200 flex items-center gap-2 text-sm font-bold">
+          <span className="text-lg leading-none">&#9888;</span> This link has expired. Generate a new one.
+        </div>
       ) : (
         <>
           <div className="flex items-center gap-2">
@@ -74,12 +78,12 @@ export function PresignedUrlPanel({ fileName, url, expiresAt, onClose }: Presign
               type="text"
               readOnly
               value={url}
-              className="flex-1 truncate rounded-md border border-slate-600 bg-slate-900 px-3 py-2 text-xs text-slate-300"
+              className="flex-1 truncate rounded-lg border border-blue-200 bg-white px-3 py-2.5 text-xs font-mono text-gray-600 focus:outline-hidden focus:ring-2 focus:ring-blue-500"
             />
             <button
               type="button"
               onClick={handleCopy}
-              className="shrink-0 rounded-md bg-blue-600 px-3 py-2 text-xs font-medium text-white transition hover:bg-blue-500"
+              className="shrink-0 rounded-lg bg-blue-600 px-4 py-2.5 text-xs font-black uppercase tracking-widest text-white transition hover:bg-blue-700 active:scale-95 shadow-sm"
             >
               {copied ? "Copied!" : "Copy"}
             </button>
@@ -87,17 +91,20 @@ export function PresignedUrlPanel({ fileName, url, expiresAt, onClose }: Presign
               href={url}
               target="_blank"
               rel="noopener noreferrer"
-              className="shrink-0 rounded-md border border-slate-600 px-3 py-2 text-xs text-slate-300 transition hover:bg-slate-700"
+              className="shrink-0 rounded-lg bg-white border border-blue-200 px-4 py-2.5 text-xs font-black uppercase tracking-widest text-blue-700 transition hover:bg-blue-50 hover:border-blue-300 active:scale-95 shadow-sm"
             >
               Open
             </a>
           </div>
 
-          <p className="mt-2 text-xs text-slate-500">
-            Expires in <span className="font-mono text-slate-300">{formatCountdown(secondsRemaining)}</span>
-          </p>
+          <div className="mt-3 flex items-center gap-2 text-xs font-medium text-gray-500">
+            Expires in:
+            <span className="font-mono font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded">
+              {formatCountdown(secondsRemaining)}
+            </span>
+          </div>
         </>
       )}
-    </section>
+    </div>
   );
 }

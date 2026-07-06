@@ -42,10 +42,10 @@ export function FileUploader({ onUpload, isUploading, disabled }: FileUploaderPr
   const isInteractive = !disabled && !isUploading;
 
   return (
-    <section className="rounded-lg border border-slate-700 bg-slate-800 p-4">
-      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
-        Upload
-      </h2>
+    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 flex-1">
+      <h3 className="text-sm font-black text-gray-800 uppercase tracking-widest mb-4">
+        Upload File
+      </h3>
 
       <div
         onDragOver={(event) => {
@@ -64,11 +64,11 @@ export function FileUploader({ onUpload, isUploading, disabled }: FileUploaderPr
             inputRef.current?.click();
           }
         }}
-        className={`flex min-h-32 flex-col items-center justify-center rounded-md border-2 border-dashed px-4 py-8 text-center text-sm transition ${
+        className={`flex min-h-[12rem] flex-col items-center justify-center rounded-xl border-2 border-dashed px-4 py-8 text-center text-sm transition-all ${
           isDragOver
-            ? "border-blue-500 bg-blue-950/40"
-            : "border-slate-600 bg-slate-900"
-        } ${isInteractive ? "cursor-pointer hover:border-slate-500" : "cursor-not-allowed opacity-50"}`}
+            ? "border-blue-500 bg-blue-50 ring-4 ring-blue-50"
+            : "border-gray-300 bg-gray-50 hover:bg-gray-100 hover:border-gray-400"
+        } ${isInteractive ? "cursor-pointer" : "cursor-not-allowed opacity-60"}`}
       >
         <input
           ref={inputRef}
@@ -80,16 +80,16 @@ export function FileUploader({ onUpload, isUploading, disabled }: FileUploaderPr
         />
 
         {isUploading ? (
-          <p className="text-slate-300">Uploading…</p>
+          <p className="text-blue-600 font-bold animate-pulse tracking-wide">Uploading…</p>
         ) : disabled ? (
-          <p className="text-slate-500">Select a bucket to enable uploads</p>
+          <p className="text-gray-500 font-medium">Select a bucket to enable uploads</p>
         ) : (
           <>
-            <p className="text-slate-300">Drag and drop files here, or click to browse</p>
-            <p className="mt-1 text-xs text-slate-500">Max 50MB per file</p>
+            <p className="text-gray-700 font-bold mb-2">Drag and drop files here, or click to browse</p>
+            <p className="mt-1 text-xs text-gray-500 font-mono">Max 50MB per file</p>
           </>
         )}
       </div>
-    </section>
+    </div>
   );
 }

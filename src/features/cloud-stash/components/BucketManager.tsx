@@ -16,16 +16,16 @@ export function BucketManager({
   onSelectBucket,
 }: BucketManagerProps) {
   return (
-    <section className="rounded-lg border border-slate-700 bg-slate-800 p-4">
-      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
+    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+      <h3 className="text-sm font-black text-gray-800 uppercase tracking-widest mb-4">
         Buckets
-      </h2>
+      </h3>
 
       <select
         value={selectedBucket ?? ""}
         onChange={(event) => onSelectBucket(event.target.value || null)}
         disabled={isLoading}
-        className="w-full rounded-md border border-slate-600 bg-slate-900 px-3 py-2 text-sm text-white disabled:opacity-50 sm:w-auto"
+        className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-medium text-gray-800 focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
       >
         <option value="">Select a bucket…</option>
         {buckets.map((bucket) => (
@@ -34,6 +34,6 @@ export function BucketManager({
           </option>
         ))}
       </select>
-    </section>
+    </div>
   );
 }
