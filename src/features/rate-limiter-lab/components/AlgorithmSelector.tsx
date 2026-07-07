@@ -34,7 +34,7 @@ export default function AlgorithmSelector({
       <h3 className="text-sm font-black text-gray-800 uppercase tracking-widest mb-4">
         Active Algorithm
       </h3>
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div className="flex flex-col lg:flex-row gap-3">
         {ALGORITHMS.map((algo) => {
           const isActive = currentAlgorithm === algo.id;
           return (

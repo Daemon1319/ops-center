@@ -144,14 +144,12 @@ export default function PipelineVisualizer({ events, connected, stats, outboxEnt
   const counters = buildCounters(stats, outboxEntries);
 
   return (
-    <div className="bg-slate-900 rounded-xl border border-slate-800 shadow-lg p-5 overflow-hidden">
+    <div className="bg-slate-900 rounded-xl border border-slate-800 shadow-lg p-5">
       {/* Header */}
-      <div className="flex items-center justify-between mb-5">
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-black text-slate-300 uppercase tracking-widest">
-            Message Pipeline
-          </span>
-        </div>
+      <div className="flex items-center justify-between mb-6">
+        <span className="text-xs font-black text-slate-300 uppercase tracking-widest">
+          Message Pipeline
+        </span>
         <div className="flex items-center gap-2">
           <span
             className={`h-2 w-2 rounded-full ${
@@ -166,20 +164,62 @@ export default function PipelineVisualizer({ events, connected, stats, outboxEnt
         </div>
       </div>
 
-      {/* Main pipeline (happy path) */}
-      <div className="relative flex items-center justify-between gap-1 mb-6">
-        {STAGES.map((stage, i) => (
-          <div key={stage.id} className="flex items-center flex-1 min-w-0">
-            <StageNode stage={stage} count={counters[stage.id] ?? 0} particles={particles} />
-            {i < STAGES.length - 1 && <Arrow />}
-          </div>
-        ))}
+      {/* ─── MOBILE LAYOUT: vertical pipeline ─── */}
+      <div className="flex flex-col items-center gap-0 lg:hidden">
+        {STAGES.map((stage, i) => {
+          const isWorker = stage.id === "worker";
+          return (
+            <div key={stage.id} className="flex flex-col items-center w-full">
+              {/* Stage row: node + branch nodes (for worker) */}
+              <div className={`flex items-center w-full ${isWorker ? "justify-between gap-3" : "justify-center"}`}>
+                {/* Left branch: Retry (on same row as Worker) */}
+                {isWorker && (
+                  <MobileBranchNode
+                    stage={BRANCH_STAGES.retry}
+                    count={counters["retry"] ?? 0}
+                    label="→ Retry"
+                    particles={particles}
+                    side="left"
+                  />
+                )}
+
+                <StageNode stage={stage} count={counters[stage.id] ?? 0} particles={particles} />
+
+                {/* Right branch: DLQ (on same row as Worker) */}
+                {isWorker && (
+                  <MobileBranchNode
+                    stage={BRANCH_STAGES.dlq}
+                    count={counters["dlq"] ?? 0}
+                    label="→ DLQ"
+                    particles={particles}
+                    side="right"
+                  />
+                )}
+              </div>
+              {/* Down arrow between stages */}
+              {i < STAGES.length - 1 && <ArrowDown />}
+            </div>
+          );
+        })}
       </div>
 
-      {/* Branch lines */}
-      <div className="flex items-start justify-center gap-16">
-        <BranchNode stage={BRANCH_STAGES.retry} count={counters["retry"] ?? 0} label="Failed → Retry" particles={particles} />
-        <BranchNode stage={BRANCH_STAGES.dlq} count={counters["dlq"] ?? 0} label="Exhausted → DLQ" particles={particles} />
+      {/* ─── DESKTOP LAYOUT: horizontal pipeline ─── */}
+      <div className="hidden lg:block">
+        {/* Main pipeline (happy path) */}
+        <div className="flex items-center justify-between gap-1 mb-6">
+          {STAGES.map((stage, i) => (
+            <div key={stage.id} className="flex items-center flex-1 min-w-0">
+              <StageNode stage={stage} count={counters[stage.id] ?? 0} particles={particles} />
+              {i < STAGES.length - 1 && <Arrow />}
+            </div>
+          ))}
+        </div>
+
+        {/* Branch lines */}
+        <div className="flex items-start justify-center gap-16">
+          <BranchNode stage={BRANCH_STAGES.retry} count={counters["retry"] ?? 0} label="Failed → Retry" particles={particles} />
+          <BranchNode stage={BRANCH_STAGES.dlq} count={counters["dlq"] ?? 0} label="Exhausted → DLQ" particles={particles} />
+        </div>
       </div>
     </div>
   );
@@ -235,6 +275,17 @@ function Arrow() {
   );
 }
 
+function ArrowDown() {
+  return (
+    <div className="flex flex-col items-center my-1">
+      <div className="w-px h-5 bg-gradient-to-b from-slate-700 to-slate-600" />
+      <svg className="w-2 h-2 text-slate-600 -mt-px shrink-0" viewBox="0 0 8 8" fill="currentColor">
+        <path d="M0 0 L8 0 L4 8 Z" />
+      </svg>
+    </div>
+  );
+}
+
 function BranchNode({ stage, count, label, particles }: { stage: Stage; count: number; label: string; particles: Particle[] }) {
   // eslint-disable-next-line react-hooks/purity
   const isTarget = particles.some((p) => p.to === stage.id && Date.now() - p.createdAt < PARTICLE_LIFETIME_MS);
@@ -258,6 +309,43 @@ function BranchNode({ stage, count, label, particles }: { stage: Stage; count: n
         {count > 0 && (
           <span
             className="absolute -top-2 -right-2 h-5 min-w-5 flex items-center justify-center rounded-full text-[9px] font-black text-white px-1"
+            style={{ backgroundColor: stage.dotColor }}
+          >
+            {count}
+          </span>
+        )}
+        {isTarget && (
+          <span
+            className="absolute inset-0 rounded-xl animate-ping opacity-20"
+            style={{ backgroundColor: stage.dotColor }}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
+function MobileBranchNode({ stage, count, label, particles, side }: { stage: Stage; count: number; label: string; particles: Particle[]; side: "left" | "right" }) {
+  // eslint-disable-next-line react-hooks/purity
+  const isTarget = particles.some((p) => p.to === stage.id && Date.now() - p.createdAt < PARTICLE_LIFETIME_MS);
+
+  return (
+    <div className="flex flex-col items-center gap-1.5 flex-1 min-w-0">
+      <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider text-center leading-tight">{label}</span>
+      <div
+        className={`relative flex flex-col items-center justify-center gap-1 w-full px-2 py-2.5 rounded-xl border border-slate-700/50 transition-all duration-300 ${stage.color} ${
+          isTarget ? "scale-105" : ""
+        }`}
+        style={{
+          boxShadow: isTarget ? `0 0 16px ${stage.glow}, 0 0 30px ${stage.glow}` : `0 0 0px transparent`,
+        }}
+      >
+        <span className="text-[9px] font-black uppercase tracking-widest whitespace-nowrap text-center">
+          {stage.label}
+        </span>
+        {count > 0 && (
+          <span
+            className="absolute -top-2 -right-1 h-4 min-w-4 flex items-center justify-center rounded-full text-[8px] font-black text-white px-1"
             style={{ backgroundColor: stage.dotColor }}
           >
             {count}

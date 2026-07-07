@@ -112,7 +112,7 @@ export default function TaskYard() {
     <section className="w-full max-w-6xl mx-auto p-4 flex flex-col gap-6">
 
       {/* HEADER */}
-      <header className="bg-slate-900 rounded-xl p-6 border border-slate-800 shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <header className="bg-slate-900 rounded-xl p-6 border border-slate-800 shadow-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-black text-white tracking-tight">Task Yard</h2>
           <p className="text-sm text-gray-500 mt-2 max-w-2xl font-mono">

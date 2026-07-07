@@ -69,7 +69,7 @@ export default function AccountStateCard({ username, status }: AccountStateCardP
 
   return (
     <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 flex flex-col justify-between h-full min-h-[160px]">
-      <div className="flex justify-between items-start mb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
         <div>
           <h3 className="text-sm font-black text-gray-800 uppercase tracking-widest mb-1">
             Target Account
