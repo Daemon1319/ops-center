@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import AuthVault from "@/features/auth-vault/index";
-import FlashSale from "@/features/flashsale-engine";
+import FlashlockEngine from "@/features/flashlock-engine";
 import RateLimiterLab from "@/features/rate-limiter-lab/index";
 import TaskYard from "@/features/task-yard/index";
 import CloudStash from "@/features/cloud-stash/index";
@@ -73,17 +73,17 @@ export default function OpsCenter() {
             1. Identity Vault
           </button>
           
-          {/* Button 2: Flash Sale */}
+          {/* Button 2: Flashlock Engine */}
           <button 
             onClick={() => {
-              setActiveTab("flashsale");
+              setActiveTab("flashlock-engine");
               setIsMobileMenuOpen(false); // Auto-close menu on mobile
             }}
             className={`text-left px-4 py-3 rounded-lg font-medium transition-all ${
-              activeTab === "flashsale" ? "bg-blue-600 text-white" : "text-gray-400 hover:bg-gray-800"
+              activeTab === "flashlock-engine" ? "bg-blue-600 text-white" : "text-gray-400 hover:bg-gray-800"
             }`}
           >
-            2. High-Concurrency Locks
+            2. Flashlock Engine
           </button>
 
           {/* 2. Button 3: Rate Limiter Lab */}
@@ -148,9 +148,9 @@ export default function OpsCenter() {
           <AuthVault />
         )}
 
-        {/* Conditional Rendering: Flash Sale */}
-        {activeTab === "flashsale" && (
-          <FlashSale />
+        {/* Conditional Rendering: Flashlock Engine */}
+        {activeTab === "flashlock-engine" && (
+          <FlashlockEngine />
         )}
 
         {/* 3. Conditional Rendering: Rate Limiter Lab */}

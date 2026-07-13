@@ -47,7 +47,7 @@ interface StressTestResults {
 
 const API_BASE_URL = `${process.env.NEXT_PUBLIC_FLASHSALE_API_URL}/api/flashsale`;
 
-export default function FlashSale() {
+export default function FlashlockEngine() {
   const [productData, setProductData] = useState<ProductDto | null>(null);
   const [orders, setOrders] = useState<OrderDto[]>([]);
   const [lockMode, setLockMode] = useState<LockMode>("LOADING");
